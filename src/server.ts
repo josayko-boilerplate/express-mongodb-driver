@@ -16,7 +16,6 @@ app.get("/", (req, res) => {
 });
 
 app.post("/createpost", async (req, res) => {
-  console.log("body: ", req.body);
   const newPost: IPost = req.body as IPost;
   console.log("payload: ", newPost);
 
