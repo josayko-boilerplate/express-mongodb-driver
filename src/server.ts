@@ -1,8 +1,11 @@
 import express from "express";
 import { MongoClient } from "mongodb";
 import { createPost, IPost } from "./post";
+import cors from "cors";
 
 const app = express();
+app.use(express.json());
+app.use(cors());
 
 const connectToDb = async () => {
   return await MongoClient.connect("mongodb://localhost:27017");
@@ -12,12 +15,10 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
-app.get("/createpost", async (req, res) => {
-  const newPost: IPost = {
-    title: "third post",
-    content: "This is the content of my first post.",
-    author: "John Doe",
-  } as IPost;
+app.post("/createpost", async (req, res) => {
+  console.log("body: ", req.body);
+  const newPost: IPost = req.body as IPost;
+  console.log("payload: ", newPost);
 
   try {
     const postId = await createPost(newPost);
