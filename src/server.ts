@@ -14,7 +14,7 @@ app.get("/", (req, res) => {
 
 app.get("/createpost", async (req, res) => {
   const newPost: IPost = {
-    title: "My First Post",
+    title: "third post",
     content: "This is the content of my first post.",
     author: "John Doe",
   } as IPost;
@@ -22,8 +22,10 @@ app.get("/createpost", async (req, res) => {
   try {
     const postId = await createPost(newPost);
     res.send({ status: "ok", code: 200, details: { id: postId } });
-  } catch (err: any) {
-    res.status(400).send({ status: "error", code: 400, details: err });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(400).send({ status: "error", code: 400, details: err });
+    }
   }
 });
 

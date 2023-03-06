@@ -1,4 +1,5 @@
 import { ObjectId } from "bson";
+import { PostSchema } from "./schema";
 import { connectToDb } from "./server";
 
 export interface IPost {
@@ -6,12 +7,19 @@ export interface IPost {
   title: string;
   content: string;
   author: string;
-  createAt: Date;
+  createdAt: Date;
   updatedAt: Date;
 }
 
 export async function createPost(post: IPost): Promise<string> {
   const client = await connectToDb();
+  await client.db("blog").command({
+    collMod: "posts",
+    validator: {
+      $jsonSchema: PostSchema,
+    },
+  });
+
   const postsCollection = client.db("blog").collection("posts");
 
   // Validate the post data
@@ -21,7 +29,7 @@ export async function createPost(post: IPost): Promise<string> {
 
   // Set createdAt and updatedAt fields
   const now = new Date();
-  post.createAt = now;
+  post.createdAt = now;
   post.updatedAt = now;
 
   // Insert the post into the database
